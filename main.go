@@ -45,7 +45,6 @@ func (s Services) RebuildUrl(url string) (string, error) {
 }
 
 func (s *Services) LoadDataFromFile(path string) {
-	// Open the JSON file
 	file, err := os.Open(path)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
@@ -54,7 +53,6 @@ func (s *Services) LoadDataFromFile(path string) {
 
 	defer file.Close()
 
-	// Read the JSON data from the file
 	data, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
