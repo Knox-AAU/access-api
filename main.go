@@ -20,22 +20,18 @@ type Service struct {
 	Base_url string `json:"base_url"`
 }
 
-type Services struct {
-	Services []Service
-}
-
 type AppState struct {
-	services     Services
+	services     []Service
 	internal_key string
 }
 
-func (s Services) RebuildUrl(url string) (string, error) {
+func (a AppState) RebuildUrl(url string) (string, error) {
 	parts := strings.Split(url, "/")
 	if len(parts) == 0 {
 		return "", fmt.Errorf("url does not specify service")
 	}
 
-	for _, service := range s.Services {
+	for _, service := range a.services {
 		if service.Name == parts[1] {
 			return strings.Replace(url, "/"+parts[1], service.Base_url, 1), nil
 		}
@@ -44,7 +40,7 @@ func (s Services) RebuildUrl(url string) (string, error) {
 	return "", fmt.Errorf("invalid service name")
 }
 
-func (s *Services) LoadDataFromFile(path string) {
+func (a *AppState) LoadDataFromFile(path string) {
 	file, err := os.Open(path)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
@@ -59,7 +55,7 @@ func (s *Services) LoadDataFromFile(path string) {
 		return
 	}
 
-	err = json.Unmarshal(data, &s.Services)
+	err = json.Unmarshal(data, &a.services)
 	if err != nil {
 		fmt.Println("Error unmarshaling JSON:", err)
 		return
@@ -70,52 +66,52 @@ func (appState *AppState) LoadEnvs() {
 	appState.internal_key = mustGetEnv("INTERNAL_KEY")
 }
 
-func (appState *AppState) ServeHTTP(org_res http.ResponseWriter, org_req *http.Request) {
-	url, err := appState.services.RebuildUrl(org_req.URL.Path)
+func (appState *AppState) ServeHTTP(originRes http.ResponseWriter, originReq *http.Request) {
+	url, err := appState.RebuildUrl(originReq.URL.Path)
 	if err != nil {
-		org_res.Write([]byte("Invalid service"))
+		originRes.Write([]byte("invalid service, got error: " + err.Error() + "\n"))
 		return
 	}
 
-	// Can this be any smarter? I think it is a lot of lines...
-	client := &http.Client{}
-	body, err := io.ReadAll(org_req.Body)
+	body, err := io.ReadAll(originReq.Body)
 	if err != nil {
-		// I dont fucking care
+		originRes.Write([]byte("Unable to read body from request, got error: " + err.Error() + "\n"))
+		return
 	}
 
-	// Creates proxy request
-	proxy_req, err := http.NewRequest(org_req.Method, url, bytes.NewBuffer(body))
+	proxyReq, err := http.NewRequest(originReq.Method, url, bytes.NewBuffer(body))
+	if err != nil {
+		originRes.Write([]byte("Unable to create request, got error: " + err.Error() + "\n"))
+		return
+	}
 
-	// Add headers from org_request to proxy_req
-	for key, values := range org_req.Header {
-		// Key is the header name, values is a slice of header values
+	for key, values := range originReq.Header {
 		for _, value := range values {
-			proxy_req.Header.Set(key, value)
+			proxyReq.Header.Set(key, value)
 			fmt.Printf("Setting header %s as %s\n", key, value)
 		}
 	}
 
-	// Send the request
-	// WAAAAY to many lines. Please fix
 	fmt.Printf("Sending proxy request to %s", url)
-	proxy_res, err := client.Do(proxy_req)
+	client := &http.Client{}
+
+	proxyRes, err := client.Do(proxyReq)
 	if err != nil {
-		org_res.Write([]byte("Unable to send request"))
+		originRes.Write([]byte("Unable to send proxy request, got error: " + err.Error() + "\n"))
 		return
 	}
-	defer proxy_res.Body.Close()
 
-	// call middlewares for f.eks. logging
-	middlewares.Middlewares(*proxy_req, *proxy_res, *org_req)
+	defer proxyRes.Body.Close()
 
-	// Read the response body
-	proxy_res_body, err := io.ReadAll(proxy_res.Body)
+	middlewares.Middlewares(*proxyReq, *proxyRes, *originReq)
+
+	proxy_res_body, err := io.ReadAll(proxyRes.Body)
 	if err != nil {
+		originRes.Write([]byte("Unable to read body from response, got error: " + err.Error() + "\n"))
+		return
 	}
 
-	org_res.Write(proxy_res_body)
-
+	originRes.Write(proxy_res_body)
 }
 
 func (appState AppState) AuthMiddleware(h http.Handler) http.Handler {
@@ -141,9 +137,9 @@ func mustGetEnv(k string) string {
 
 func main() {
 	appState := AppState{
-		services: Services{},
+		services: []Service{},
 	}
-	appState.services.LoadDataFromFile("./services.json")
+	appState.LoadDataFromFile("./services.json")
 	appState.LoadEnvs()
 
 	router := mux.NewRouter().StrictSlash(true)
