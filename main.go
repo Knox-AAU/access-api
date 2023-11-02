@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -56,7 +55,7 @@ func (s *Services) LoadDataFromFile(path string) {
 	defer file.Close()
 
 	// Read the JSON data from the file
-	data, err := ioutil.ReadAll(file)
+	data, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 		return
@@ -113,7 +112,7 @@ func (appState *AppState) ServeHTTP(org_res http.ResponseWriter, org_req *http.R
 	middlewares.Middlewares(*proxy_req, *proxy_res, *org_req)
 
 	// Read the response body
-	proxy_res_body, err := ioutil.ReadAll(proxy_res.Body)
+	proxy_res_body, err := io.ReadAll(proxy_res.Body)
 	if err != nil {
 	}
 
