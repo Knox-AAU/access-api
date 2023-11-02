@@ -11,7 +11,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Knox-AAU/access-api/pkg/middlewares"
+	"access-api/pkg/middlewares"
+
 	"github.com/gorilla/mux"
 )
 
