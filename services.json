@@ -1,0 +1,14 @@
+[
+    {
+        "name": "service1",
+        "base_url": "https://jsonplaceholder.typicode.com"
+    },
+    {
+        "name": "",
+        "base_url": ""
+    },
+    {
+        "name": "",
+        "base_url": ""
+    }
+]
