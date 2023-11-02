@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  app:
+    build: 
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/app
+    
+    #command: go run cmd/main.go -b 0.0.0.0
