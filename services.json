@@ -1,6 +1,6 @@
 [
     {
-        "name": "service1",
+        "name": "test",
         "base_url": "https://jsonplaceholder.typicode.com"
     },
     {

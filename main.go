@@ -13,6 +13,7 @@ import (
 	"access-api/pkg/middlewares"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 type Service struct {
@@ -43,7 +44,7 @@ func (a AppState) RebuildUrl(url string) (string, error) {
 func (a *AppState) LoadDataFromFile(path string) {
 	file, err := os.Open(path)
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		log.Println("Error opening file:", err)
 		return
 	}
 
@@ -51,18 +52,19 @@ func (a *AppState) LoadDataFromFile(path string) {
 
 	data, err := io.ReadAll(file)
 	if err != nil {
-		fmt.Println("Error reading file:", err)
+		log.Println("Error reading file:", err)
 		return
 	}
 
 	err = json.Unmarshal(data, &a.services)
 	if err != nil {
-		fmt.Println("Error unmarshaling JSON:", err)
+		log.Println("Error unmarshaling JSON:", err)
 		return
 	}
 }
 
 func (appState *AppState) LoadEnvs() {
+	godotenv.Load(".env")
 	appState.internal_key = mustGetEnv("INTERNAL_KEY")
 }
 
@@ -88,11 +90,11 @@ func (appState *AppState) ServeHTTP(originRes http.ResponseWriter, originReq *ht
 	for key, values := range originReq.Header {
 		for _, value := range values {
 			proxyReq.Header.Set(key, value)
-			fmt.Printf("Setting header %s as %s\n", key, value)
+			log.Printf("Setting header %s as %s\n", key, value)
 		}
 	}
 
-	fmt.Printf("Sending proxy request to %s", url)
+	log.Printf("Sending proxy request to %s", url)
 	client := &http.Client{}
 
 	proxyRes, err := client.Do(proxyReq)
@@ -145,6 +147,6 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.PathPrefix("/").HandlerFunc(appState.ServeHTTP)
 
-	fmt.Println("Listening at port 8080..")
+	log.Println("Listening at port 8080..")
 	log.Fatal(http.ListenAndServe(":8080", appState.AuthMiddleware(router)))
 }
