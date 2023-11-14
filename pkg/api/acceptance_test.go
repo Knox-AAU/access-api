@@ -2,8 +2,6 @@ package api_test
 
 import (
 	"access-api/pkg/api"
-	"bytes"
-	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -40,17 +38,14 @@ func TestSystem(t *testing.T) {
 		"Access-Authorization": internalKey,
 	}
 	testName := "TestSystem"
-	response := s.sendRequest(http.MethodGet, testName, header, nil)
+	response := s.sendRequest(http.MethodGet, testName, header)
 	require.NotEmpty(t, response, testName)
 }
 
-func (s *systemTest) sendRequest(method, testName string, header map[string]string, body map[string]interface{}) string {
+func (s *systemTest) sendRequest(method, testName string, header map[string]string) string {
 	const route = "/test"
-	buffer := new(bytes.Buffer)
-	err := json.NewEncoder(buffer).Encode(body)
-	require.NoError(s.t, err, testName, body)
 
-	req, err := http.NewRequest(string(method), string(route), buffer)
+	req, err := http.NewRequest(string(method), string(route), nil)
 	require.NoError(s.t, err, testName, method, route)
 
 	for key, value := range header {
