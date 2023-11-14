@@ -29,7 +29,6 @@ func mustGetENV(key string) string {
 }
 
 func TestSystem(t *testing.T) {
-	require.True(t, false)
 	router := api.SetupRouter("../../")
 
 	s := systemTest{
