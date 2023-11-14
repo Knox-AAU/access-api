@@ -36,10 +36,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build and push Docker image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: ./
-          file: ./Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+        run: |
+          docker build --build-arg INTERNAL_KEY=${{ vars.INTERNAL_KEY }} -t ${{ steps.meta.outputs.image }} .
+          docker push ${{ steps.meta.outputs.image }}
