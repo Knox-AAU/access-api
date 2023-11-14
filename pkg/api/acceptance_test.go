@@ -28,25 +28,25 @@ func mustGetENV(key string) string {
 
 func TestSystem(t *testing.T) {
 	router := api.SetupRouter("../../")
-
-	s := systemTest{
+	systemTest{
 		router: router,
 		t:      t,
-	}
+	}.sendRequest()
+}
+
+func (s systemTest) sendRequest() {
+	const (
+		route    = "/test"
+		testName = "TestSystem"
+	)
+
 	internalKey := mustGetENV("INTERNAL_KEY")
 	header := map[string]string{
 		"Access-Authorization": internalKey,
 	}
-	testName := "TestSystem"
-	response := s.sendRequest(http.MethodGet, testName, header)
-	require.NotEmpty(t, response, testName)
-}
+	req, err := http.NewRequest(string(http.MethodGet), string(route), nil)
 
-func (s *systemTest) sendRequest(method, testName string, header map[string]string) string {
-	const route = "/test"
-
-	req, err := http.NewRequest(string(method), string(route), nil)
-	require.NoError(s.t, err, testName, method, route)
+	require.NoError(s.t, err, testName, route)
 
 	for key, value := range header {
 		req.Header.Set(key, value)
@@ -62,5 +62,5 @@ func (s *systemTest) sendRequest(method, testName string, header map[string]stri
 	require.NoError(s.t, err, testName)
 	require.Equal(s.t, http.StatusOK, response.StatusCode, testName)
 	responseData := string(responseBody)
-	return responseData
+	require.NotEmpty(s.t, responseData, testName)
 }

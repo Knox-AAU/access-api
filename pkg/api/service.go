@@ -68,13 +68,21 @@ func (appState *AppState) ServeHTTP(originRes http.ResponseWriter, originReq *ht
 		return
 	}
 
-	body, err := io.ReadAll(originReq.Body)
-	if err != nil {
-		originRes.Write([]byte("Unable to read body from request, got error: " + err.Error() + "\n"))
-		return
+	var (
+		proxyReq *http.Request
+	)
+
+	if originReq.Body != nil {
+		body, err := io.ReadAll(originReq.Body)
+		if err != nil {
+			originRes.Write([]byte("Unable to read body from request, got error: " + err.Error() + "\n"))
+			return
+		}
+		proxyReq, err = http.NewRequest(originReq.Method, url, bytes.NewBuffer(body))
+	} else {
+		proxyReq, err = http.NewRequest(originReq.Method, url, nil)
 	}
 
-	proxyReq, err := http.NewRequest(originReq.Method, url, bytes.NewBuffer(body))
 	if err != nil {
 		originRes.Write([]byte("Unable to create request, got error: " + err.Error() + "\n"))
 		return
