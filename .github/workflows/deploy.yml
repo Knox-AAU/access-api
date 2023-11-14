@@ -1,8 +1,6 @@
 name: Docker deploy image
 
 on:
-  schedule:
-    - cron: "15 23 * * *"
   push:
     branches-ignore:
       - "*" # Ignore all branches
