@@ -1,12 +1,11 @@
 name: Docker deploy image
 
 on:
-  push:
-    branches-ignore:
-      - "*" # Ignore all branches
-      - "!main" # Except main 
-    tags:
-      - "*.*.*"
+  workflow_run:
+    workflows: ["Test"]
+    branches: [main]
+    types: 
+      - completed
   workflow_dispatch:
 
 env:
@@ -17,6 +16,7 @@ env:
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
