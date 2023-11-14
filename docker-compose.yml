@@ -8,6 +8,6 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/usr/src/app
+      - .:/app
     
     #command: go run cmd/main.go -b 0.0.0.0
