@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+env:
+  TAG: ${{ github.sha }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -17,8 +20,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t gcr.io/$PROJECT_ID/$IMAGE:$TAG .
-          docker save gcr.io/$PROJECT_ID/$IMAGE:$TAG > image.tar
+          docker build -t $TAG .
         
       - name: Run Tests 
-        run: docker run --network="host" -e POSTGRES_TESTING_DB=${{ env.TEST_POSTGRES_DB }} -e POSTGRES_USER=${{ env.TEST_POSTGRES_USER }} -e POSTGRES_PASSWORD=${{ env.TEST_POSTGRES_PASSWORD }} -e POSTGRES_TESTING_HOST=localhost -e POSTGRES_PORT=5432 gcr.io/$PROJECT_ID/$IMAGE:$TAG go test ./... -v
+        run: docker run $TAG go test ./... -v
