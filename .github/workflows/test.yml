@@ -23,4 +23,4 @@ jobs:
           docker build -t $TAG .
         
       - name: Run Tests 
-        run: docker run $TAG go test ./... -v
+        run: docker run -E INTERNAL_KEY=test $TAG go test ./... -v
