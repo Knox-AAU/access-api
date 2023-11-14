@@ -5,6 +5,6 @@
     },
     {
         "name": "knox-api",
-        "base_url": "http://192.38.54.90:8080"
+        "base_url": "http://192.38.54.90"
     }
 ]
