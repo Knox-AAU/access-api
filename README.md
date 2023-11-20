@@ -1,5 +1,7 @@
 # access-api
 
+The Access API is publicly accessible on `130.225.57.13`. You can use that as url, without any ssh connection established. 
+
 ## Connect to server via ssh
 
 ```bash
