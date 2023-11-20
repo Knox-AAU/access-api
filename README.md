@@ -16,6 +16,8 @@ sudo docker run -p 0.0.0.0:80:8080 -d -e INTERNAL_KEY=<internal_key> ghcr.io/kno
 
 ## Add new service
 
+Before adding your service, you have to make sure that you deploy your service from port `80` on it's server. This means that when you deploy your service, you have to be connected to your server via `<your_port>:localhost:80`.
+
 ### Find your service's ip
 
 Connect to the server your service is running on via ssh and run:
