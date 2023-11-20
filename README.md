@@ -1,12 +1,16 @@
 # access-api
 
+The Access API is publicly accessible on `130.225.57.13`. You can use that as url, without any ssh connection established. 
+
 ## Connect to server via ssh
 
 ```bash
 ssh <student_mail>@knox-proxy01.srv.aau.dk -L <your_port>:localhost:80
 ```
 
-## Deploy new version
+## Deploy new version manually
+
+Deployment is normally handled by watchtower on push to main. However, in case of the need of manual deployment, run
 
 ```bash
 sudo docker run -p 0.0.0.0:80:8080 -d -e INTERNAL_KEY=<internal_key> ghcr.io/knox-aau/access-api:main
@@ -14,19 +18,23 @@ sudo docker run -p 0.0.0.0:80:8080 -d -e INTERNAL_KEY=<internal_key> ghcr.io/kno
 
 ## Add new service
 
+Before adding your service, you have to make sure that you deploy your service from port `80` on it's server. This means that when you deploy your service, you have to be connected to your server via `<your_port>:localhost:80`, and in your deployment command, you need to specify the ports like `-p 0.0.0.0:80:<your_port>`.
+
+Example:
+```bash
+ssh <STUDENT_MAIL>@knox-kb01.srv.aau.dk -L <your_port>:localhost:80
+docker run -p 0.0.0.0:80:8000 --add-host=host.docker.internal:host-gateway -d ghcr.io/knox-aau/databaselayer_server:main
+```
+
 ### Find your service's ip
 
-Connect to the server your service is running on and run:
+Connect to the server your service is running on via ssh and run:
 
 ```bash
-hostname -I
+ifconfig
 ```
 
-Output should be something like:
-
-```bash
-<your_ip> <something_else>
-```
+Output includes a list of things. The right one is usually prefixed with `ens160: ` and is the only one that has a normal ip address und `inet`, eg, inet 192.38.54.90.
 
 ### Update the service list
 
