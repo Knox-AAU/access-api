@@ -38,7 +38,7 @@ Output includes a list of things. The right one is usually prefixed with `ens160
 
 ### Update the service list
 
-Create a pull request with the following changes:
+Create a pull request to the access api github [repository](https://github.com/Knox-AAU/access-api) with the following changes:
 
 - Add your service to the list in `services.json`
 
@@ -54,7 +54,7 @@ Create a pull request with the following changes:
 
 ### Use the service
 
-[Connect](#connect-to-server-via-ssh) to the server and send a request to `http://localhost:<your_port>/<your_service_name>/<your_service_endpoint>`.
+Send a request to `http://130.225.57.13/<your_service_name>/<your_service_endpoint>`.
 
 header `access-authorization` must be set to `<internal_key>` to access the service. Contact the authors of this repository or the current Product Owner of KNOX to get the key.
 
