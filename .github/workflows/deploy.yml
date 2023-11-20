@@ -19,7 +19,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-# hello world
 
     steps:
       - uses: actions/checkout@v3
