@@ -23,7 +23,7 @@ Before adding your service, you have to make sure that you deploy your service f
 Example:
 ```bash
 ssh <STUDENT_MAIL>@knox-kb01.srv.aau.dk -L <your_port>:localhost:80
-docker run -p 0.0.0.0:80:8000 --add-host=host.docker.internal:host-gateway -d ghcr.io/knox-aau/databaselayer_server:main
+docker run -p 0.0.0.0:80:<your_port> --add-host=host.docker.internal:host-gateway -d ghcr.io/knox-aau/databaselayer_server:main
 ```
 
 ### Find your service's ip
