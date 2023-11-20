@@ -16,17 +16,13 @@ sudo docker run -p 0.0.0.0:80:8080 -d -e INTERNAL_KEY=<internal_key> ghcr.io/kno
 
 ### Find your service's ip
 
-Connect to the server your service is running on and run:
+Connect to the server your service is running on via ssh and run:
 
 ```bash
-hostname -I
+ifconfig
 ```
 
-Output should be something like:
-
-```bash
-<your_ip> <something_else>
-```
+Output includes a list of things. The right one is usually prefixed with `ens160: ` and is the only one that has a normal ip address und `inet`, eg, inet 192.38.54.90.
 
 ### Update the service list
 
