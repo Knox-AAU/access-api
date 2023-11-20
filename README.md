@@ -6,7 +6,9 @@
 ssh <student_mail>@knox-proxy01.srv.aau.dk -L <your_port>:localhost:80
 ```
 
-## Deploy new version
+## Deploy new version manually
+
+Deployment is normally handled by watchtower on push to main. However, in case of the need of manual deployment, run
 
 ```bash
 sudo docker run -p 0.0.0.0:80:8080 -d -e INTERNAL_KEY=<internal_key> ghcr.io/knox-aau/access-api:main
