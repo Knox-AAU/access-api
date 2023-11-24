@@ -148,5 +148,7 @@ func SetupRouter(path string) http.Handler {
 	router := mux.NewRouter().StrictSlash(true)
 	router.PathPrefix("/").HandlerFunc(appState.ServeHTTP)
 
+	router.Use(middlewares.LoggingMiddleware)
+
 	return appState.AuthMiddleware(router)
 }
