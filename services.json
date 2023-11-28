@@ -6,7 +6,7 @@
     },
     {
         "name": "knox-api",
-        "base_url": "http://localhost:8000",
+        "base_url": "http://192.38.54.90",
         "authorization_key_identifier":"KNOX_DATABASE_AUTHORIZATION"
     }
 ]
