@@ -21,6 +21,7 @@ sudo docker run -p 0.0.0.0:80:8080 -d -e INTERNAL_KEY=<internal_key> ghcr.io/kno
 Before adding your service, you have to make sure that you deploy your service from port `80` on it's server. This means that when you deploy your service, you have to be connected to your server via `<your_port>:localhost:80`, and in your deployment command, you need to specify the ports like `-p 0.0.0.0:80:<your_port>`.
 
 Example:
+
 ```bash
 ssh <STUDENT_MAIL>@knox-kb01.srv.aau.dk -L <your_port>:localhost:80
 docker run -p 0.0.0.0:80:<your_port> --add-host=host.docker.internal:host-gateway -d ghcr.io/knox-aau/databaselayer_server:main
@@ -47,10 +48,13 @@ Create a pull request to the access api github [repository](https://github.com/K
     // other services here ...
     {
       "name": "<your_service_name>",
-      "base_url": "http://<your_ip>"
+      "base_url": "http://<your_ip>",
+      "authorization_key_identifier":"<your_env_key>"
     }
 ]
 ```
+
+The `authorization_key_identifier` can be ignored if your service does not require authentication. This is the key, not the value. The value has to be injected into the Access API as environment variable using the `docker run` command. To work, the run command has to be executed again on the server the access api is running on.
 
 ### Use the service
 

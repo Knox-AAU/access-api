@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -9,8 +8,6 @@ import (
 
 func Middlewares(proxy_req http.Request, proxy_res http.Response, org_req http.Request) {
 	// Implelemt stuff like logging or metrics here, idk tbh
-	fmt.Println("Everything is awsome")
-
 }
 
 func LoggingMiddleware(next http.Handler) http.Handler {

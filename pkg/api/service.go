@@ -15,19 +15,19 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func (a AppState) RebuildUrl(url string) (string, error) {
+func (a AppState) RebuildUrl(url string) (targetUrl string, authorizationKeyIdentifier string, err error) {
 	parts := strings.Split(url, "/")
 	if len(parts) == 0 {
-		return "", fmt.Errorf("url does not specify service")
+		return "", "", fmt.Errorf("url does not specify service")
 	}
 
 	for _, service := range a.services {
 		if service.Name == parts[1] {
-			return strings.Replace(url, "/"+parts[1], service.Base_url, 1), nil
+			return strings.Replace(url, "/"+parts[1], service.Base_url, 1), service.AuthorizationKeyIdentifier, nil
 		}
 	}
 
-	return "", fmt.Errorf("invalid service name")
+	return "", "", fmt.Errorf("invalid service name")
 }
 
 func (a *AppState) LoadDataFromFile(path string) {
@@ -58,11 +58,11 @@ func (a *AppState) LoadDataFromFile(path string) {
 
 func (appState *AppState) LoadEnvs(path string) {
 	godotenv.Load(path + ".env")
-	appState.internal_key = mustGetEnv("INTERNAL_KEY")
+	appState.internalKey = mustGetEnv("INTERNAL_KEY")
 }
 
 func (appState *AppState) ServeHTTP(originRes http.ResponseWriter, originReq *http.Request) {
-	url, err := appState.RebuildUrl(originReq.URL.Path)
+	url, authorizationKeyIdentifier, err := appState.RebuildUrl(originReq.URL.Path)
 	if err != nil {
 		originRes.Write([]byte("invalid service, got error: " + err.Error() + "\n"))
 		return
@@ -88,24 +88,17 @@ func (appState *AppState) ServeHTTP(originRes http.ResponseWriter, originReq *ht
 		return
 	}
 
-	for key, values := range originReq.Header {
-		for _, value := range values {
-			proxyReq.Header.Set(key, value)
-			log.Printf("Setting header %s as %s\n", key, value)
-		}
-	}
+	copyRequest(originReq, proxyReq, authorizationKeyIdentifier, url)
 
-	log.Printf("Sending proxy request to %s", url)
 	client := &http.Client{}
-
 	proxyRes, err := client.Do(proxyReq)
+
 	if err != nil {
 		originRes.Write([]byte("Unable to send proxy request, got error: " + err.Error() + "\n"))
 		return
 	}
 
 	defer proxyRes.Body.Close()
-
 	middlewares.Middlewares(*proxyReq, *proxyRes, *originReq)
 
 	proxy_res_body, err := io.ReadAll(proxyRes.Body)
@@ -114,13 +107,40 @@ func (appState *AppState) ServeHTTP(originRes http.ResponseWriter, originReq *ht
 		return
 	}
 
+	for key, values := range proxyRes.Header {
+		for _, value := range values {
+			originRes.Header().Set(key, value)
+		}
+	}
+
 	originRes.Write(proxy_res_body)
+}
+
+func copyRequest(originReq *http.Request, proxyReq *http.Request, authorizationKeyIdentifier string, url string) {
+	for key, values := range originReq.Header {
+		for _, value := range values {
+			proxyReq.Header.Set(key, value)
+			log.Printf("Setting header %s as %s\n", key, value)
+		}
+	}
+
+	authorizationKey := os.Getenv(authorizationKeyIdentifier)
+	if authorizationKey == "" && authorizationKeyIdentifier != "" {
+		log.Printf("Authorization key %s not set in Access API", authorizationKeyIdentifier)
+	}
+
+	proxyReq.Header.Set("Authorization", authorizationKey)
+
+	// copy params
+	proxyReq.URL.RawQuery = originReq.URL.RawQuery
+
+	log.Printf("Sending proxy request to %s", url)
 }
 
 func (appState AppState) AuthMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if appState.internal_key != r.Header.Get("Access-Authorization") {
-			http.Error(w, "Authentication error!", http.StatusForbidden)
+		if appState.internalKey != r.Header.Get("Access-Authorization") {
+			http.Error(w, "Access API Authentication error!", http.StatusForbidden)
 			return
 		}
 

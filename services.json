@@ -1,10 +1,12 @@
 [
     {
         "name": "test",
-        "base_url": "https://jsonplaceholder.typicode.com"
+        "base_url": "https://jsonplaceholder.typicode.com",
+        "authorization_key_identifier":""
     },
     {
         "name": "knox-api",
-        "base_url": "http://192.38.54.90"
+        "base_url": "http://localhost:8000",
+        "authorization_key_identifier":"KNOX_DATABASE_AUTHORIZATION"
     }
 ]
