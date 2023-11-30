@@ -33,9 +33,17 @@ Add your service to the list in [services.json](https://github.com/Knox-AAU/acce
 
 For examples, check out the actual [services.json](https://github.com/Knox-AAU/access-api/blob/main/services.json) file.
 
-The `authorization_key_identifier` can be ignored if your service does not require authentication. This is the key, not the value. The value has to be injected into the Access API as environment variable using the `docker run` command.
+After the changes are merged into main, view the Github Action tab for the status of the deployment. After it succeeds, there can go up to a minute for Watchtower to update the container. After that, your service should be available. See [Use the service](#use-the-service) for more information.
 
-In case of authentication required, `docker run` has to be executed again on the server the access api is running on, with the new environment variable injected into the container. For deployment, see [Deploy new version manually](#deploy-new-version-manually).
+### Authorization of your service
+
+The `authorization_key_identifier` can be ignored if your service does not require authentication. 
+
+This is the name of the key, not the value.
+
+Your service *must* accept the header `Authorization` with the value of the key. If your service does not accept this header, the access api will not be able to access your service.
+
+For the environment variable to be set in the Access API, `docker run` has to be executed again on it's server, with the new environment variable injected into the container. For deployment, see [Deploy new version manually](#deploy-new-version-manually), or contact the authors.
 
 ### Use the service
 
