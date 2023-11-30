@@ -6,7 +6,7 @@
     },
     {
         "name": "knox-api",
-        "base_url": "http://192.38.54.90",
+        "base_url": "http://knox-kb01.srv.aau.dk:8000",
         "authorization_key_identifier":"KNOX_DATABASE_AUTHORIZATION"
     },
     {
@@ -15,3 +15,4 @@
         "authorization_key_identifier":"KNOX_TRIPLECONSTRUCTION_AUTHORIZATION"
     }
 ]
+
