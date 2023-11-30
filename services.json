@@ -12,7 +12,7 @@
     {
         "name": "tripleconstruction-api",
         "base_url": "http://192.38.54.87",
-        "authorization_key_identifier":"Access-Authorization"
+        "authorization_key_identifier":"API_SECRET"
     }
 ]
 
