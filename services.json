@@ -11,7 +11,7 @@
     },
     {
         "name": "tripleconstruction-api",
-        "base_url": "http://192.38.54.87",
+        "base_url": "http://knox-preproc01.srv.aau.dk:4444",
         "authorization_key_identifier":"API_SECRET"
     }
 ]
