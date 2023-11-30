@@ -12,7 +12,7 @@
     {
         "name": "tripleconstruction-api",
         "base_url": "http://192.38.54.87",
-        "authorization_key_identifier":"KNOX_TRIPLECONSTRUCTION_AUTHORIZATION"
+        "authorization_key_identifier":"Access-Authorization"
     }
 ]
 
