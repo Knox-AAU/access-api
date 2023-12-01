@@ -13,6 +13,11 @@
         "name": "tripleconstruction-api",
         "base_url": "http://knox-preproc01.srv.aau.dk:4444",
         "authorization_key_identifier":"API_SECRET"
+    },
+    {
+        "name": "metadata-api",
+        "base_url": "http://knox-preproc01.srv.aau.dk:5000",
+        "authorization_key_identifier": ""
     }
 ]
 
