@@ -24,3 +24,15 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 func GenerateRequestID() string {
 	return time.Now().Format("20060102-15:04:05")
 }
+
+func Authentication(h http.Handler, expectedKey string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if expectedKey != r.Header.Get("Access-Authorization") {
+			http.Error(w, "Access API Authentication error!", http.StatusForbidden)
+			return
+		}
+
+		r.Header.Del("Access-Authorization")
+		h.ServeHTTP(w, r)
+	})
+}

@@ -137,18 +137,6 @@ func copyRequest(originReq *http.Request, proxyReq *http.Request, authorizationK
 	log.Printf("Sending proxy request to %s", url)
 }
 
-func (appState AppState) AuthMiddleware(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if appState.internalKey != r.Header.Get("Access-Authorization") {
-			http.Error(w, "Access API Authentication error!", http.StatusForbidden)
-			return
-		}
-
-		r.Header.Del("Access-Authorization")
-		h.ServeHTTP(w, r)
-	})
-}
-
 func mustGetEnv(k string) string {
 	v := os.Getenv(k)
 	if v == "" {
@@ -170,5 +158,5 @@ func SetupRouter(path string) http.Handler {
 
 	router.Use(middlewares.LoggingMiddleware)
 
-	return appState.AuthMiddleware(router)
+	return middlewares.Authentication(router, appState.internalKey)
 }
