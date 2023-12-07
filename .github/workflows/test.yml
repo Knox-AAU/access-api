@@ -18,9 +18,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Validate services.json file
+      - name: Validate services.json file 
         run: |
-          validation_string=$(echo "${response}" | python -c '
+          python -c '
           import json,sys
           try:
               with open("services.json") as f:
@@ -28,10 +28,8 @@ jobs:
               print("Valid JSON")
           except Exception as e:
               print("Invalid JSON")
-              print(e)
-              sys.exit(1)
-          ')  
-          echo $validation_string   # This should print "Valid JSON" OR "Invalid JSON" with error stacktrace
+              print(str(e))
+              sys.exit(1) 
 
       - name: Build Docker Image
         run: |
