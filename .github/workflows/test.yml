@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Check for valid services.json file
+      - name: Validate services.json file
         
         run: |
           json_string=$(echo "${response}" | python -c '
