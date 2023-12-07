@@ -18,6 +18,20 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Check for valid services.json file
+        
+        run: |
+          json_string=$(echo "${response}" | python -c '
+          import json,sys
+          try:
+              json.load(sys.stdin)
+              print("Valid JSON")
+          except ValueError as e:
+              print("Invalid JSON")
+              print(e)
+              sys.exit(1)
+          echo $json_string
+
       - name: Build Docker Image
         run: |
           docker build -t $TAG .
