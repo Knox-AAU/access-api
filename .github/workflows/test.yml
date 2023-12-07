@@ -19,20 +19,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate services.json file
-        
         run: |
-          json_string=$(echo "${response}" | python -c '
+          response=$(cat services.json)  # Ensure the response contains the valid JSON string
+          validation_string=$(echo "${response}" | python -c '
           import json,sys
+          obj=None
           try:
-              json.load(sys.stdin)
+              obj=json.load(sys.stdin)
               print("Valid JSON")
           except Exception as e:
               print("Invalid JSON")
               print(e)
               sys.exit(1)
-          ')
-          echo $json_string
-          echo "JOB_LOG=$json_string" >> $GITHUB_ENV
+          ')  
+          echo $validation_string   # This should print "Valid JSON" OR "Invalid JSON" with error stacktrace
+          echo "JOB_LOG=$response" >> $GITHUB_ENV  # This will store the actual JSON into GITHUB_ENV
 
       - name: Build Docker Image
         run: |
