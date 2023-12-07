@@ -21,15 +21,15 @@ jobs:
       - name: Validate services.json file
         run: |
           validation_string=$(echo "${response}" | python -c '
-            import json,sys
-            try:
-                with open("services.json") as f:
-                    json.load(f)
-                print("Valid JSON")
-            except Exception as e:
-                print("Invalid JSON")
-                print(e)
-                sys.exit(1)
+          import json,sys
+          try:
+              with open("services.json") as f:
+                  json.load(f)
+              print("Valid JSON")
+          except Exception as e:
+              print("Invalid JSON")
+              print(e)
+              sys.exit(1)
           ')  
           echo $validation_string   # This should print "Valid JSON" OR "Invalid JSON" with error stacktrace
 
