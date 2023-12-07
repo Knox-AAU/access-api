@@ -30,7 +30,8 @@ jobs:
               print("Invalid JSON")
               print(str(e))
               sys.exit(1) 
-
+          '
+          
       - name: Build Docker Image
         run: |
           docker build -t $TAG .
