@@ -39,7 +39,7 @@ After the changes are merged into main, view the Github Action tab for the statu
 
 The `authorization_key_identifier` can be ignored if your service does not require authentication. 
 
-This is the name of the key, not the value.
+This is the name of the key as it is set in the `docker run` command.
 
 Your service *must* accept the header `Authorization` with the value of the key. If your service does not accept this header, the access api will not be able to access your service.
 
