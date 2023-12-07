@@ -32,6 +32,7 @@ jobs:
               sys.exit(1)
           ')
           echo $json_string
+          echo "JOB_LOG=$json_string" >> $GITHUB_ENV
 
       - name: Build Docker Image
         run: |
