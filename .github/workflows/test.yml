@@ -21,15 +21,44 @@ jobs:
       - name: Validate services.json file 
         run: |
           python -c '
-          import json,sys
-          try:
-              with open("services.json") as f:
-                  json.load(f)
-              print("Valid JSON")
-          except Exception as e:
-              print("Invalid JSON")
-              print(str(e))
-              sys.exit(1) 
+          import json
+
+          class InvalidJSON(Exception):
+              pass
+
+          class MissingKey(Exception):
+              pass
+
+          class InvalidType(Exception):
+              pass
+
+          expected_keys = [
+              ("name", str),
+              ("base_url", str),
+              ("authorization_key_identifier", str),
+          ]
+
+          with open("services.json") as f:
+              services=None 
+              try:
+                  services: list[dict] = json.load(f)
+              except json.JSONDecodeError as e:
+                  raise InvalidJSON(e)
+
+              for i in range(len(expected_keys)):
+                  for j in range (len(services)):
+                      if expected_keys[i][0] not in services[j]:
+                          raise MissingKey(expected_keys[i][0] + " in service " + str(services[j]))
+
+                      if not isinstance(services[j][expected_keys[i][0]], expected_keys[i][1]):
+                          raise InvalidType(
+                              "Key "
+                              + expected_keys[i][0]
+                              + " is not of type "
+                              + str(expected_keys[i][1])
+                          )
+
+          print("Valid JSON")
           '
           
       - name: Build Docker Image
