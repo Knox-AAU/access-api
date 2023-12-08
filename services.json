@@ -23,6 +23,12 @@
         "name": "entity-mentions-and-linking-api",
         "base_url": "http://knox-preproc01.srv.aau.dk:3000",
         "authorization_key_identifier": ""
+    },
+    {
+        "name":"llama-api",
+        "base_url": "http://knox-func01.srv.aau.dk:5004",
+        "authorization_key_identifier": ""
+        
     }
 ]
 
