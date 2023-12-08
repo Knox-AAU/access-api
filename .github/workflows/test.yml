@@ -32,6 +32,9 @@ jobs:
           class InvalidType(Exception):
               pass
 
+          class DuplicateValue(Exception):
+              pass
+
           expected_keys = [
               ("name", str),
               ("base_url", str),
@@ -44,9 +47,13 @@ jobs:
                   services: list[dict] = json.load(f)
               except json.JSONDecodeError as e:
                   raise InvalidJSON(e)
+              
+              names = set()
+              base_urls = set()
+              authorization_keys = set()
 
-              for i in range(len(expected_keys)):
-                  for j in range (len(services)):
+              for j in range (len(services)):
+                  for i in range(len(expected_keys)):
                       if expected_keys[i][0] not in services[j]:
                           raise MissingKey(expected_keys[i][0] + " in service " + str(services[j]))
 
@@ -56,10 +63,23 @@ jobs:
                               + expected_keys[i][0]
                               + " is not of type "
                               + str(expected_keys[i][1])
-                              + " in service "
-                              + str(services[j])
                           )
+                  
+                  if services[j]["name"] in names:
+                      raise DuplicateValue("name " + services[j]["name"])
+                  
+                  names.add(services[j]["name"])
+                  
+                  if services[j]["base_url"] in base_urls:
+                      raise DuplicateValue("base_url " + services[j]["base_url"])
+                  
+                  base_urls.add(services[j]["base_url"])
 
+                  if services[j]["authorization_key_identifier"] != "":
+                      if services[j]["authorization_key_identifier"] in authorization_keys:
+                          raise DuplicateValue("authorization_key_identifier " + services[j]["authorization_key_identifier"])
+                      authorization_keys.add(services[j]["authorization_key_identifier"])
+              
           print("Valid JSON")
           '
           
