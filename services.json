@@ -2,7 +2,7 @@
     {
         "name": "test",
         "base_url": "https://jsonplaceholder.typicode.com",
-        "authorization_key_identifier":""
+        "authorization_key_identifier":0
     },
     {
         "name": "knox-api",
