@@ -4,10 +4,8 @@ services:
     build: 
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "80:80"
     env_file:
       - .env
     volumes:
-      - .:/app
-    
-    #command: go run cmd/main.go -b 0.0.0.0
+      - .:/usr/src/app
