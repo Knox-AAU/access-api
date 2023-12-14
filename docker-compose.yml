@@ -4,8 +4,9 @@ services:
     build: 
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8080:8080"
     env_file:
       - .env
     volumes:
-      - .:/usr/src/app
+      - .:/app
+    
